@@ -1,6 +1,4 @@
-
-
-Options All -Indexes
-
-
-
+AuthType Basic
+AuthName "restricted"
+AuthUserFile .htpasswd
+Require valid-user
