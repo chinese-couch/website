@@ -45,12 +45,16 @@ jobs:
       run: |
         if [ "${{ github.ref }}" = "refs/heads/main" ]; then
           WEBHOOK_URL="${{ secrets.HOSTINGER_MAIN_WEBHOOK_URL }}"
+          DEPLOY_BRANCH="main-deploy"
         else
           WEBHOOK_URL="${{ secrets.HOSTINGER_DEVELOP_WEBHOOK_URL }}"
+          DEPLOY_BRANCH="develop-deploy"
         fi
         
         if [ -n "$WEBHOOK_URL" ]; then
-          curl -X POST "$WEBHOOK_URL"
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "ref=refs/heads/${DEPLOY_BRANCH}"
         else
-          echo "No webhook URL configured for this branch"
+          echo "No webhook URL configured for this branch."
         fi
