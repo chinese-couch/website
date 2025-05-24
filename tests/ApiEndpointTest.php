@@ -10,7 +10,7 @@ class ApiEndpointTest extends TestCase
     {
         // Set your base URL for testing
         // Update this to match your actual development server
-        $this->baseUrl = 'http://localhost:8000/api-test.php';
+        $this->baseUrl = 'http://localhost:8000/api-test/';
         
         // Alternative URLs to try:
         // $this->baseUrl = 'http://localhost:8000/api-test';  // PHP built-in server

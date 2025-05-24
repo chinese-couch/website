@@ -1,9 +1,9 @@
 <?php
-// api-test.php - API endpoint with bearer token authentication
-require __DIR__ . '/vendor/autoload.php';
+// api-test.php - API endpoint with bearer token authentication.
+require __DIR__ . '/../vendor/autoload.php';
 
 // Looing for .env at the root directory
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
 // Headers
