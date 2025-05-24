@@ -45,4 +45,4 @@ jobs:
 
     - name: Trigger Hostinger webhook (optional)
       run: |
-        curl -X POST SECRET
+        curl -X POST $SECRET
