@@ -1,0 +1,48 @@
+name: Deploy to Hostinger
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history needed for branch operations
+
+    - name: Configure Git
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+
+    - name: Create deployment branch
+      run: |
+        # Determine target branch
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          DEPLOY_BRANCH="main-deploy"
+          SECRET="${{ secrets.HOSTINGER_MAIN_WEBHOOK_URL }}"
+        else
+          DEPLOY_BRANCH="develop-deploy"
+          SECRET="${{ secrets.HOSTINGER_DEVELOP_WEBHOOK_URL }}"
+        fi
+        
+        # Create or checkout deployment branch
+        git checkout -B $DEPLOY_BRANCH
+        
+        # Remove test files and directories
+        rm -rf tests/
+        find . -name "*Test.php" -type f -delete
+        rm -f phpunit.xml phpunit.xml.dist
+        
+        # Commit changes
+        git add -A
+        git commit -m "Deploy: Remove test files from ${{ github.ref_name }}" || echo "No changes to commit"
+        
+        # Push to deployment branch
+        git push origin $DEPLOY_BRANCH --force
+
+    - name: Trigger Hostinger webhook (optional)
+      run: |
+        curl -X POST SECRET
