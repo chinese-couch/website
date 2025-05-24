@@ -22,10 +22,8 @@ jobs:
         # Determine target branch
         if [ "${{ github.ref }}" = "refs/heads/main" ]; then
           DEPLOY_BRANCH="main-deploy"
-          SECRET="${{ secrets.HOSTINGER_MAIN_WEBHOOK_URL }}"
         else
           DEPLOY_BRANCH="develop-deploy"
-          SECRET="${{ secrets.HOSTINGER_DEVELOP_WEBHOOK_URL }}"
         fi
         
         # Create or checkout deployment branch
@@ -43,6 +41,16 @@ jobs:
         # Push to deployment branch
         git push origin $DEPLOY_BRANCH --force
 
-    - name: Trigger Hostinger webhook (optional)
+    - name: Trigger Hostinger webhook
       run: |
-        curl -X POST $SECRET
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          WEBHOOK_URL="${{ secrets.HOSTINGER_MAIN_WEBHOOK_URL }}"
+        else
+          WEBHOOK_URL="${{ secrets.HOSTINGER_DEVELOP_WEBHOOK_URL }}"
+        fi
+        
+        if [ -n "$WEBHOOK_URL" ]; then
+          curl -X POST "$WEBHOOK_URL"
+        else
+          echo "No webhook URL configured for this branch"
+        fi
