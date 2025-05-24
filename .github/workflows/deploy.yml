@@ -10,7 +10,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Full history needed for branch operations
+        fetch-depth: 0
 
     - name: Configure Git
       run: |
@@ -40,21 +40,5 @@ jobs:
         
         # Push to deployment branch
         git push origin $DEPLOY_BRANCH --force
-
-    - name: Trigger Hostinger webhook
-      run: |
-        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-          WEBHOOK_URL="${{ secrets.HOSTINGER_MAIN_WEBHOOK_URL }}"
-          DEPLOY_BRANCH="main-deploy"
-        else
-          WEBHOOK_URL="${{ secrets.HOSTINGER_DEVELOP_WEBHOOK_URL }}"
-          DEPLOY_BRANCH="develop-deploy"
-        fi
         
-        if [ -n "$WEBHOOK_URL" ]; then
-          curl -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "ref=refs/heads/${DEPLOY_BRANCH}"
-        else
-          echo "No webhook URL configured for this branch."
-        fi
+        echo "Pushed to $DEPLOY_BRANCH - Hostinger should auto-deploy"
